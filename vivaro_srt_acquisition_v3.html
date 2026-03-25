@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vivaro Media – SRT Signal Acquisition Form</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #eef0f5;
+    color: #1a1a2e;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 16px 80px;
+  }
+
+  /* ── PAGE ── */
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .site-header img.logo {
+    height: 60px;
+    margin-bottom: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* SVG logo fallback */
+  .logo-svg {
+    display: block;
+    margin: 0 auto 16px;
+  }
+
+  .site-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+
+  .site-header .subtitle {
+    font-size: 13px;
+    color: #7a8599;
+    font-style: italic;
+  }
+
+  .header-rule {
+    width: 60px;
+    height: 3px;
+    background: #FDDA64;
+    margin: 12px auto 0;
+    border: none;
+    border-radius: 2px;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #eef2f9;
+    border-left: 4px solid #345D9D;
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.6;
+  }
+
+  .info-box strong { color: #1e3a6e; }
+
+  .info-box.yellow {
+    background: #fffde7;
+    border-left-color: #FDDA64;
+    color: #5a4a00;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .section-header {
+    background: #345D9D;
+    border-bottom: 3px solid #FDDA64;
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-header h2 {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+  }
+
+  .sec-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-body {
+    padding: 20px 20px 24px;
+  }
+
+  /* ── FIELD ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 0;
+  }
+
+  .field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .field label .req { color: #e53e3e; }
+
+  .field label .hint-inline {
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .field input[type=text],
+  .field input[type=email],
+  .field input[type=tel],
+  .field input[type=date],
+  .field input[type=time],
+  .field input[type=number],
+  .field select,
+  .field textarea {
+    border: 1px solid #d1d9e6;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #1a1a2e;
+    background: #ffffff;
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: #345D9D;
+    box-shadow: 0 0 0 2px rgba(52,93,157,0.12);
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239ca3af'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+
+  .field textarea {
+    min-height: 90px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .field .field-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    line-height: 1.4;
+  }
+
+  input.mono, .mono { font-family: 'SF Mono', 'Fira Mono', 'Courier New', monospace; }
+
+  /* ── GRID ── */
+  .grid { display: grid; gap: 14px 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .span2 { grid-column: span 2; }
+  .span3 { grid-column: span 3; }
+
+  /* ── FEED COUNT PILLS ── */
+  .feed-count-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+  }
+
+  .feed-pill {
+    position: relative;
+  }
+
+  .feed-pill input[type=radio] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .feed-pill-lbl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid #d1d9e6;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.14s;
+    user-select: none;
+  }
+
+  .feed-pill input[type=radio]:checked + .feed-pill-lbl {
+    background: #345D9D;
+    border-color: #345D9D;
+    color: white;
+  }
+
+  /* ── SRT MODE RADIO ── */
+  .mode-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .mode-option {
+    position: relative;
+  }
+
+  .mode-option input[type=radio] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mode-option-lbl {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 12px 14px;
+    border: 1.5px solid #d1d9e6;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #fafafa;
+    transition: all 0.14s;
+    user-select: none;
+  }
+
+  .mode-option input[type=radio]:checked + .mode-option-lbl {
+    border-color: #345D9D;
+    background: #eef2f9;
+  }
+
+  .mode-radio-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #d1d9e6;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.14s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mode-option input[type=radio]:checked + .mode-option-lbl .mode-radio-dot {
+    border-color: #345D9D;
+    background: #345D9D;
+  }
+
+  .mode-option input[type=radio]:checked + .mode-option-lbl .mode-radio-dot::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: white;
+    display: block;
+  }
+
+  .mode-option-text strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 2px;
+  }
+
+  .mode-option-text em {
+    font-style: normal;
+    font-size: 11.5px;
+    color: #6b7280;
+  }
+
+  /* ── CONDITIONAL PANELS ── */
+  .cond-panel {
+    display: none;
+    margin-top: 16px;
+  }
+
+  .cond-panel.visible { display: block; }
+
+  /* Per-feed row inside conditional panel */
+  .feed-row {
+    border: 1px solid #d1d9e6;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .feed-row-header {
+    background: #2a4f8a;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .feed-row-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .feed-row-tag {
+    font-size: 9px;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .feed-row-body {
+    padding: 14px;
+    background: #f9fafb;
+  }
+
+  /* Listener panel */
+  .panel-listener .feed-row-header { background: #7c5000; }
+  .panel-listener .feed-row-body { background: #fffde7; border-top: 1px solid #fcd34d; }
+
+  /* Caller panel (blue-tinted) */
+  .panel-caller-msg {
+    background: #eef2f9;
+    border: 1.5px solid #345D9D;
+    border-radius: 5px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #1e3a6e;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 18px 0;
+  }
+
+  /* ── SUB HEADING ── */
+  .sub-heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #345D9D;
+    margin-bottom: 14px;
+  }
+
+  /* ── OPTIONAL SECTION TOGGLE ── */
+  .optional-toggle-wrap {
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .optional-toggle {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .optional-toggle input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #345D9D;
+    flex-shrink: 0;
+  }
+
+  .optional-toggle-text strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .optional-toggle-text p {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 1px;
+  }
+
+  .optional-body {
+    display: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .optional-body.open { display: block; }
+
+  .optional-body .section-header {
+    /* inside optional body - same style */
+  }
+
+  /* ── AUDIO TABLE ── */
+  .audio-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .audio-table th {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  .audio-table td {
+    border: 1px solid #e5e7eb;
+    padding: 4px 6px;
+  }
+
+  .audio-table tr:nth-child(even) td { background: #fafafa; }
+
+  .audio-table td input {
+    border: none;
+    background: transparent;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 12px;
+    width: 100%;
+    color: #1a1a2e;
+  }
+
+  .audio-table td input:focus {
+    outline: none;
+    background: #eef2f9;
+    border-radius: 3px;
+  }
+
+  .audio-table td.ch-num {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 11px;
+    width: 60px;
+    background: #f9fafb;
+  }
+
+  /* ── SIGN-OFF ── */
+  .signoff {
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  /* ── FORM ACTIONS ── */
+  .form-actions {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    padding: 11px 32px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.14s;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .btn-submit {
+    background: #345D9D;
+    color: white;
+  }
+
+  .btn-submit:hover {
+    background: #2a4f8a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52,93,157,0.25);
+  }
+
+  .btn-print {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d9e6;
+  }
+
+  .btn-print:hover {
+    color: #374151;
+    border-color: #9ca3af;
+    background: #f9fafb;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .g2, .g3 { grid-template-columns: 1fr; }
+    .span2, .span3 { grid-column: span 1; }
+    .page { max-width: 100%; }
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .form-actions { display: none; }
+    input, select, textarea { background: white !important; -webkit-print-color-adjust: exact; }
+    .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ SITE HEADER ══ -->
+  <div class="site-header">
+    <!-- Vivaro logo SVG (matches the branded wordmark) -->
+    <svg class="logo-svg" width="160" height="56" viewBox="0 0 160 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="800" font-size="38" letter-spacing="-1" fill="#1e3a6e">vívaro</text>
+      <text x="2" y="54" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-weight="600" font-size="11" letter-spacing="4" fill="#345D9D">MEDIA</text>
+    </svg>
+    <h1>SRT Signal Acquisition Form</h1>
+    <p class="subtitle">Sender / Source Configuration Requirements</p>
+    <hr class="header-rule">
+  </div>
+
+  <!-- ══ INTRO BOX ══ -->
+  <div class="info-box">
+    <strong>Vivaro Media</strong> acquires SRT feeds in either <strong>Listener</strong> or <strong>Caller</strong> mode depending on your network setup.
+    If you select <strong>Caller mode</strong> (you dial out to Vivaro), our NMC team will provide your ingest IP and port details after reviewing this form.
+    One stream per SRT connection.
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 1 — General Information
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">1</div>
+      <h2>General Information</h2>
+    </div>
+    <div class="section-body">
+      <div class="grid g2" style="gap:14px;">
+        <div class="field span2">
+          <label>Event / Project Name <span class="req">*</span></label>
+          <input type="text" placeholder="e.g. Copa América – Semifinal, June 2026">
+        </div>
+        <div class="field">
+          <label>Sending Organization <span class="req">*</span></label>
+          <input type="text" placeholder="Production company, host broadcaster, or venue">
+        </div>
+        <div class="field">
+          <label>Vivaro Client / Account <span class="req">*</span></label>
+          <input type="text" placeholder="e.g. DAZN, ESPN, Rights Agency Name">
+        </div>
+        <div class="field">
+          <label>Venue / Origin Location <span class="req">*</span> <span class="hint-inline">— city &amp; country where the feed originates</span></label>
+          <input type="text" placeholder="e.g. Buenos Aires, Argentina">
+        </div>
+        <div class="field">
+          <label>Go-Live Date &amp; Time <span class="req">*</span> <span class="hint-inline">— include timezone</span></label>
+          <input type="text" placeholder="e.g. June 14 · 20:00 CT / 02:00 UTC">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 2 — Technical Contact
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">2</div>
+      <h2>Technical Contact</h2>
+    </div>
+    <div class="section-body">
+      <div class="grid g2">
+        <div class="field">
+          <label>Contact Name <span class="req">*</span></label>
+          <input type="text" placeholder="">
+        </div>
+        <div class="field">
+          <label>Title / Role <span class="req">*</span></label>
+          <input type="text" placeholder="">
+        </div>
+        <div class="field">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" placeholder="">
+        </div>
+        <div class="field">
+          <label>Phone <span class="req">*</span> <span class="hint-inline">(w/ country code)</span></label>
+          <input type="tel" placeholder="">
+        </div>
+        <div class="field">
+          <label>Backup Contact Name</label>
+          <input type="text" placeholder="">
+        </div>
+        <div class="field">
+          <label>Backup Contact Phone</label>
+          <input type="tel" placeholder="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 3 — SRT Connection Parameters
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">3</div>
+      <h2>SRT Connection Parameters</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box" style="margin-bottom:18px;">
+        Select how many feeds you are sending and your operating mode.
+        <strong>Listener mode</strong> requires you to provide your public IP and port.
+        <strong>Caller mode</strong> means Vivaro listens — we will send you our ingest IP and port after reviewing this form.
+      </div>
+
+      <!-- Feed count -->
+      <div class="field" style="margin-bottom:18px;">
+        <label>How many SRT feeds are you sending? <span class="req">*</span></label>
+        <div class="feed-count-group" id="feed-count-group">
+          <label class="feed-pill"><input type="radio" name="feed_count" value="1" checked onchange="refreshFeeds()"><span class="feed-pill-lbl">1</span></label>
+          <label class="feed-pill"><input type="radio" name="feed_count" value="2" onchange="refreshFeeds()"><span class="feed-pill-lbl">2</span></label>
+          <label class="feed-pill"><input type="radio" name="feed_count" value="3" onchange="refreshFeeds()"><span class="feed-pill-lbl">3</span></label>
+          <label class="feed-pill"><input type="radio" name="feed_count" value="4" onchange="refreshFeeds()"><span class="feed-pill-lbl">4</span></label>
+          <label class="feed-pill"><input type="radio" name="feed_count" value="5" onchange="refreshFeeds()"><span class="feed-pill-lbl">5</span></label>
+        </div>
+      </div>
+
+      <!-- Operating mode -->
+      <div class="field" style="margin-bottom:0;">
+        <label>How will your encoder connect? <span class="req">*</span></label>
+        <div class="mode-group">
+
+          <label class="mode-option">
+            <input type="radio" name="srt_mode" value="listener" onchange="handleMode('listener')">
+            <span class="mode-option-lbl">
+              <span class="mode-radio-dot"></span>
+              <span class="mode-option-text">
+                <strong>Listener — your encoder opens a port, Vivaro connects to you</strong>
+                <em>You must have a reachable public IP address. Provide your IP and port for each feed below.</em>
+              </span>
+            </span>
+          </label>
+
+          <label class="mode-option">
+            <input type="radio" name="srt_mode" value="caller" onchange="handleMode('caller')">
+            <span class="mode-option-lbl">
+              <span class="mode-radio-dot"></span>
+              <span class="mode-option-text">
+                <strong>Caller — your encoder dials out, Vivaro listens</strong>
+                <em>Works behind NAT or CGNAT — no public IP required. Vivaro will provide your ingest IP and port after this form is reviewed.</em>
+              </span>
+            </span>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- ── LISTENER panel ── -->
+      <div class="cond-panel panel-listener" id="panel-listener">
+        <div id="listener-feeds"></div>
+      </div>
+
+      <!-- ── CALLER panel ── -->
+      <div class="cond-panel" id="panel-caller">
+        <div class="panel-caller-msg">
+          ✓ <strong>Vivaro will assign ingest details after reviewing this form.</strong>
+          Our NMC team will send you the ingest hub IP address and port for each feed before your test window.
+          Please name each feed below so we can configure them correctly.
+        </div>
+        <div id="caller-feeds"></div>
+      </div>
+
+      <!-- Shared SRT params -->
+      <div class="divider"></div>
+
+      <div class="grid g3">
+        <div class="field">
+          <label>SRT Latency — Main (ms)</label>
+          <input type="number" class="mono" placeholder="e.g. 120">
+          <span class="field-hint">Default: 120 ms. Increase for high-latency or lossy paths.</span>
+        </div>
+        <div class="field">
+          <label>SRT Latency — Backup (ms)</label>
+          <input type="number" class="mono" placeholder="e.g. 120">
+        </div>
+        <div class="field">
+          <label>Encryption</label>
+          <div class="mode-group" style="gap:6px; margin-top:2px;">
+            <label class="mode-option">
+              <input type="radio" name="srt_enc" value="none" checked>
+              <span class="mode-option-lbl" style="padding:8px 12px;">
+                <span class="mode-radio-dot"></span>
+                <span class="mode-option-text"><strong style="font-size:12.5px;">No encryption</strong></span>
+              </span>
+            </label>
+            <label class="mode-option">
+              <input type="radio" name="srt_enc" value="aes128">
+              <span class="mode-option-lbl" style="padding:8px 12px;">
+                <span class="mode-radio-dot"></span>
+                <span class="mode-option-text"><strong style="font-size:12.5px;">AES-128</strong></span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passphrase — shown only when AES selected -->
+      <div id="passphrase-row" style="display:none; margin-top:14px;">
+        <div class="field" style="max-width:340px;">
+          <label>Shared Passphrase</label>
+          <input type="text" class="mono" placeholder="Agreed passphrase (min. 10 characters)">
+          <span class="field-hint">Coordinate this passphrase with your Vivaro account manager before the test window.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 4 — Sending Equipment
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">4</div>
+      <h2>Sending Equipment</h2>
+    </div>
+    <div class="section-body">
+      <div class="grid g2" style="gap:14px;">
+        <div class="field span2">
+          <label>Encoder / Software</label>
+          <select>
+            <option value="">Select your encoder…</option>
+            <option>Haivision Makito X</option>
+            <option>Haivision KB</option>
+            <option>Elemental / AWS Elemental</option>
+            <option>Dektec</option>
+            <option>LiveU LU800 / LU610</option>
+            <option>Teradek Orbit</option>
+            <option>vMix</option>
+            <option>OBS Studio</option>
+            <option>FFmpeg</option>
+            <option>Custom / Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Encoder / Model <span class="hint-inline">(if Custom / Other)</span></label>
+          <input type="text" placeholder="Brand and model">
+        </div>
+        <div class="field">
+          <label>Software / Firmware Version</label>
+          <input type="text" placeholder="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 5 — Testing & Validation
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">5</div>
+      <h2>Testing &amp; Validation</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="info-box yellow" style="margin-bottom:16px;">
+        For connectivity testing, Vivaro Media will send bars + tone. Please provide your preferred test window.
+      </div>
+
+      <div class="grid g2">
+        <div class="field">
+          <label>Preferred Test Date</label>
+          <input type="date">
+        </div>
+        <div class="field">
+          <label>Preferred Test Start Time</label>
+          <input type="time">
+        </div>
+        <div class="field">
+          <label>Test Duration</label>
+          <select>
+            <option value="">Select duration…</option>
+            <option>15 minutes</option>
+            <option>30 minutes</option>
+            <option>1 hour</option>
+            <option>2 hours</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Timezone</label>
+          <select>
+            <option value="">Select timezone…</option>
+            <option>UTC</option>
+            <option>Eastern (ET)</option>
+            <option>Central (CT)</option>
+            <option>Mountain (MT)</option>
+            <option>Pacific (PT)</option>
+            <option>GMT</option>
+            <option>CET</option>
+            <option>BRT (Brazil)</option>
+            <option>AEST</option>
+            <option>JST</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Alternate Test Date <span class="hint-inline">(if first unavailable)</span></label>
+          <input type="date">
+        </div>
+        <div class="field">
+          <label>Alternate Test Start Time</label>
+          <input type="time">
+        </div>
+      </div>
+
+      <div class="info-box yellow" style="margin-top:16px; margin-bottom:0;">
+        If custom test parameters are required, coordinate with your Vivaro Media account manager.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       OPTIONAL — Video & Audio Parameters
+  ══════════════════════════════════════ -->
+  <div class="optional-toggle-wrap">
+    <label class="optional-toggle" for="av-toggle">
+      <input type="checkbox" id="av-toggle" onchange="toggleAV(this)">
+      <div class="optional-toggle-text">
+        <strong>Show Video &amp; Audio Parameters <em style="font-weight:400;font-size:13px;color:#9ca3af;">(Optional)</em></strong>
+        <p>Provide your source signal parameters. If not specified, Vivaro NMC will confirm with you directly before the event.</p>
+      </div>
+    </label>
+
+    <div class="optional-body" id="av-body">
+      <div class="section-header" style="border-radius:0;">
+        <div class="sec-badge">6</div>
+        <h2>Video &amp; Audio Parameters</h2>
+      </div>
+      <div style="padding:20px 20px 24px;">
+
+        <!-- VIDEO -->
+        <div class="sub-heading">Video</div>
+        <div class="grid g3" style="margin-bottom:18px;">
+          <div class="field">
+            <label>Video Codec</label>
+            <div class="mode-group" style="gap:6px;margin-top:2px;">
+              <label class="mode-option">
+                <input type="radio" name="vcodec" value="h264">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">H.264 / AVC</strong></span>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="vcodec" value="h265">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">H.265 / HEVC</strong></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Resolution</label>
+            <select>
+              <option value="">Select…</option>
+              <option>1080i</option>
+              <option>1080p</option>
+              <option>720p</option>
+              <option>576i</option>
+              <option>2160p (4K UHD)</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Frame Rate</label>
+            <select>
+              <option value="">Select…</option>
+              <option>25</option>
+              <option>29.97</option>
+              <option>30</option>
+              <option>50</option>
+              <option>59.94</option>
+              <option>60</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Scan Type</label>
+            <div class="mode-group" style="gap:6px;margin-top:2px;">
+              <label class="mode-option">
+                <input type="radio" name="scan" value="p">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">Progressive (p)</strong></span>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="scan" value="i">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">Interlaced (i)</strong></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Video Bitrate (CBR)</label>
+            <input type="text" class="mono" placeholder="">
+            <span class="field-hint">CBR only — VBR is not supported</span>
+          </div>
+          <div class="field">
+            <label>GOP Structure / Length</label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+          <div class="field">
+            <label>Color Sampling</label>
+            <div class="mode-group" style="gap:6px;margin-top:2px;">
+              <label class="mode-option">
+                <input type="radio" name="chroma" value="420">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">4:2:0</strong></span>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="chroma" value="422">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">4:2:2</strong></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Bit Depth</label>
+            <div class="mode-group" style="gap:6px;margin-top:2px;">
+              <label class="mode-option">
+                <input type="radio" name="bitdepth" value="8">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">8-bit</strong></span>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="bitdepth" value="10">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">10-bit</strong></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Entropy Coding <span class="hint-inline">(if applicable)</span></label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- AUDIO -->
+        <div class="sub-heading">Audio</div>
+        <div class="grid g3" style="margin-bottom:18px;">
+          <div class="field">
+            <label>Audio Codec</label>
+            <div class="mode-group" style="gap:6px;margin-top:2px;">
+              <label class="mode-option">
+                <input type="radio" name="acodec" value="aac">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">AAC-LC</strong></span>
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="acodec" value="mp2">
+                <span class="mode-option-lbl" style="padding:8px 12px;">
+                  <span class="mode-radio-dot"></span>
+                  <span class="mode-option-text"><strong style="font-size:12.5px;">MPEG-1 Layer II</strong></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Audio Bitrate <span class="hint-inline">(per pair)</span></label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+          <div class="field">
+            <label>Number of Audio Channels</label>
+            <select>
+              <option value="">Select…</option>
+              <option>2 (1 pair / stereo)</option>
+              <option>4 (2 pairs)</option>
+              <option>8 (4 pairs)</option>
+              <option>16 (8 pairs)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:18px;">
+          <label>Channel / Pair Assignments</label>
+          <table class="audio-table">
+            <thead>
+              <tr>
+                <th>Ch</th>
+                <th>Language</th>
+                <th>Content Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="ch-num">1–2</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">3–4</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">5–6</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">7–8</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">9–10</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">11–12</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">13–14</td><td><input type="text"></td><td><input type="text"></td></tr>
+              <tr><td class="ch-num">15–16</td><td><input type="text"></td><td><input type="text"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MPEG-TS PIDs -->
+        <div class="sub-heading">Transport / MPEG-TS PIDs</div>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:12px;line-height:1.5;">
+          <strong>Defaults:</strong> PMT PID = 4096 | Video PID = 256 (also PCR) | Audio PIDs = 257, 258… (incremental).
+          Specify below only if non-default values are required.
+        </p>
+        <div class="grid g2" style="max-width:440px;">
+          <div class="field">
+            <label>Program Number</label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+          <div class="field">
+            <label>Video PID</label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+          <div class="field">
+            <label>Audio PID(s)</label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+          <div class="field">
+            <label>PCR PID</label>
+            <input type="text" class="mono" placeholder="">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SECTION 7 — Additional Notes
+  ══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="sec-badge">7</div>
+      <h2>Additional Notes / Special Requirements</h2>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <textarea placeholder="Any additional requirements, special configurations, or notes…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SIGN-OFF
+  ══════════════════════════════════════ -->
+  <div class="signoff">
+    <div class="section-header">
+      <div class="sec-badge" style="background:rgba(255,255,255,0.2);">✓</div>
+      <h2>Sign-Off</h2>
+    </div>
+    <div class="section-body">
+      <div class="grid g2">
+        <div class="field">
+          <label>Completed By <span class="req">*</span></label>
+          <input type="text" placeholder="">
+        </div>
+        <div class="field">
+          <label>Title</label>
+          <input type="text" placeholder="">
+        </div>
+        <div class="field span2">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" placeholder="">
+        </div>
+        <div class="field">
+          <label>Date <span class="req">*</span></label>
+          <input type="date">
+        </div>
+        <div class="field">
+          <label>Signature <span class="req">*</span></label>
+          <input type="text" placeholder="Type full name as signature">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FORM ACTIONS ══ -->
+  <div class="form-actions">
+    <button class="btn btn-submit" onclick="alert('In production, this submits to the Vivaro ops team.')">Submit Form</button>
+    <button class="btn btn-print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+</div><!-- end .page -->
+
+<script>
+  /* ─── Feed names helpers ─── */
+  const FEED_NAMES = ['Primary', 'Feed 2', 'Feed 3', 'Feed 4', 'Feed 5'];
+
+  function getFeedCount() {
+    const el = document.querySelector('input[name="feed_count"]:checked');
+    return el ? parseInt(el.value) : 1;
+  }
+
+  function getMode() {
+    const el = document.querySelector('input[name="srt_mode"]:checked');
+    return el ? el.value : null;
+  }
+
+  function refreshFeeds() {
+    const mode = getMode();
+    if (mode) renderFeeds(mode);
+  }
+
+  function renderFeeds(mode) {
+    const n = getFeedCount();
+
+    if (mode === 'listener') {
+      const c = document.getElementById('listener-feeds');
+      c.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        c.innerHTML += `
+          <div class="feed-row">
+            <div class="feed-row-header" style="background:#7c5000;">
+              <span class="feed-row-title">Feed ${i + 1}</span>
+              <span class="feed-row-tag">${FEED_NAMES[i]}</span>
+            </div>
+            <div class="feed-row-body" style="background:#fffde7;border-top:1px solid #fcd34d;">
+              <div class="grid g3">
+                <div class="field span3" style="grid-column:span 3;">
+                  <label>Feed / Channel Name</label>
+                  <input type="text" placeholder="e.g. World Feed – Clean, Spanish Commentary">
+                </div>
+                <div class="field" style="grid-column:span 2;">
+                  <label>Your Public IP Address <span class="req">*</span></label>
+                  <input type="text" class="mono" placeholder="e.g. 172.252.108.96">
+                  <span class="field-hint">Must be a routable public IP — not 192.168.x.x or 10.x.x.x</span>
+                </div>
+                <div class="field">
+                  <label>Your Listen Port <span class="req">*</span></label>
+                  <input type="text" class="mono" placeholder="e.g. 11009">
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }
+    }
+
+    if (mode === 'caller') {
+      const c = document.getElementById('caller-feeds');
+      c.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        c.innerHTML += `
+          <div class="feed-row">
+            <div class="feed-row-header">
+              <span class="feed-row-title">Feed ${i + 1}</span>
+              <span class="feed-row-tag">${FEED_NAMES[i]}</span>
+            </div>
+            <div class="feed-row-body">
+              <div class="field">
+                <label>Feed / Channel Name</label>
+                <input type="text" placeholder="e.g. World Feed – Clean, Spanish Commentary">
+              </div>
+              <p style="font-size:11.5px;color:#2a4f8a;margin-top:10px;line-height:1.5;">
+                Vivaro NMC will assign and send you the <strong>ingest IP and port</strong> for this feed before your test window.
+              </p>
+            </div>
+          </div>`;
+      }
+    }
+  }
+
+  function handleMode(mode) {
+    const pl = document.getElementById('panel-listener');
+    const pc = document.getElementById('panel-caller');
+    pl.classList.remove('visible');
+    pc.classList.remove('visible');
+    if (mode === 'listener') { pl.classList.add('visible'); renderFeeds('listener'); }
+    if (mode === 'caller')   { pc.classList.add('visible'); renderFeeds('caller'); }
+  }
+
+  /* Passphrase toggle */
+  document.querySelectorAll('input[name="srt_enc"]').forEach(el => {
+    el.addEventListener('change', () => {
+      document.getElementById('passphrase-row').style.display =
+        document.querySelector('input[name="srt_enc"]:checked')?.value === 'aes128' ? 'block' : 'none';
+    });
+  });
+
+  /* A/V toggle */
+  function toggleAV(cb) {
+    document.getElementById('av-body').classList.toggle('open', cb.checked);
+  }
+</script>
+</body>
+</html>
